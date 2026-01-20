@@ -17,6 +17,7 @@ let elements = {
   installBtn: null,
   toggleMeshBtn: null,
   toggleAutoShutterBtn: null,
+  switchCameraBtn: null,
   shutterBtn: null,
   smileEl: null,
   mouthEl: null,
@@ -25,13 +26,17 @@ let elements = {
   eyeStatusEl: null
 };
 
+// カメラ切り替え用のコールバック
+let switchCameraCallback = null;
+
 /**
  * アプリ設定
  */
 export const appSettings = {
   showMesh: false,
   autoShutter: false,
-  isCapturing: false
+  isCapturing: false,
+  facingMode: 'user'
 };
 
 /**
@@ -45,6 +50,7 @@ export function initUI() {
   elements.installBtn = document.getElementById('install_app');
   elements.toggleMeshBtn = document.getElementById('toggle_mesh');
   elements.toggleAutoShutterBtn = document.getElementById('toggle_auto_shutter');
+  elements.switchCameraBtn = document.getElementById('switch_camera');
   elements.shutterBtn = document.getElementById('shutter');
   elements.smileEl = document.getElementById('smile_val');
   elements.mouthEl = document.getElementById('mouth_val');
@@ -74,19 +80,35 @@ function setupEventListeners() {
 
   // メッシュ表示切り替え
   if (elements.toggleMeshBtn) {
-    elements.toggleMeshBtn.addEventListener('click', (e) => {
+    elements.toggleMeshBtn.addEventListener('click', () => {
       appSettings.showMesh = !appSettings.showMesh;
-      e.target.innerText = `メッシュ: ${appSettings.showMesh ? "ON" : "OFF"}`;
+      elements.toggleMeshBtn.classList.toggle('active', appSettings.showMesh);
     });
   }
 
   // 自動シャッター切り替え
   if (elements.toggleAutoShutterBtn) {
-    elements.toggleAutoShutterBtn.addEventListener('click', (e) => {
+    elements.toggleAutoShutterBtn.addEventListener('click', () => {
       appSettings.autoShutter = !appSettings.autoShutter;
-      e.target.innerText = `自動シャッター: ${appSettings.autoShutter ? "ON" : "OFF"}`;
+      elements.toggleAutoShutterBtn.classList.toggle('active', appSettings.autoShutter);
     });
   }
+
+  // カメラ切り替え
+  if (elements.switchCameraBtn) {
+    elements.switchCameraBtn.addEventListener('click', async () => {
+      if (switchCameraCallback) {
+        await switchCameraCallback();
+      }
+    });
+  }
+}
+
+/**
+ * カメラ切り替えコールバックを設定
+ */
+export function setSwitchCameraHandler(handler) {
+  switchCameraCallback = handler;
 }
 
 /**
@@ -164,9 +186,11 @@ export function takePhoto(video, canvas, saveCallback) {
   tempCanvas.height = canvas.height;
   const tCtx = tempCanvas.getContext("2d");
 
-  // 自撮り反転を考慮して保存
-  tCtx.translate(tempCanvas.width, 0);
-  tCtx.scale(-1, 1);
+  // フロントカメラの場合のみ反転
+  if (appSettings.facingMode === 'user') {
+    tCtx.translate(tempCanvas.width, 0);
+    tCtx.scale(-1, 1);
+  }
   tCtx.drawImage(video, 0, 0);
   tCtx.setTransform(1, 0, 0, 1, 0, 0);
 

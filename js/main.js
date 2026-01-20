@@ -7,12 +7,12 @@ if (navigator.onLine && 'caches' in window) {
   });
 }
 
-import { startCamera } from './camera.js';
+import { startCamera, switchCamera } from './camera.js';
 import { initFaceDetector, detectFaces } from './faceDetector.js';
 import { analyzeSmileWithBlendshapes } from './smileAnalyzer.js';
 import { initAutoShutter, processAutoShutter, cancelCountdown } from './autoShutter.js';
 import { drawFaceMesh } from './meshRenderer.js';
-import { initUI, appSettings, setShutterHandler, takePhoto, updateSmileDisplay, getElements } from './ui.js';
+import { initUI, appSettings, setShutterHandler, setSwitchCameraHandler, takePhoto, updateSmileDisplay, getElements } from './ui.js';
 import { saveToGallery, loadGallery } from './gallery.js';
 
 // DOM要素
@@ -39,6 +39,12 @@ async function init() {
 
   // シャッターボタンのハンドラを設定
   setShutterHandler(doTakePhoto);
+
+  // カメラ切り替えハンドラを設定
+  setSwitchCameraHandler(async () => {
+    const newMode = await switchCamera();
+    appSettings.facingMode = newMode;
+  });
 
   // グローバルに写真撮影関数を公開（自動シャッター用）
   window.takePhoto = doTakePhoto;
