@@ -23,6 +23,7 @@ body {
   transform-origin: center top;
   width: 100%;
   max-width: 640px;
+  max-height: calc(100dvh - 180px);
   aspect-ratio: 4 / 3;
 }
 video, canvas {
@@ -31,7 +32,7 @@ video, canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transform: scaleX(-1);
 }
 
@@ -173,8 +174,8 @@ button {
   }
   #viewport {
     margin-top: 5px;
-    max-width: 50vh;
-    max-height: 80vh;
+    max-width: 60vw;
+    max-height: calc(100dvh - 60px);
   }
   .controls {
     position: fixed;
@@ -200,6 +201,9 @@ button {
 
 /* 小さいモバイル */
 @media (max-width: 380px) {
+  #viewport {
+    max-height: calc(100dvh - 160px);
+  }
   button {
     padding: 10px 12px;
     font-size: 12px;
@@ -214,5 +218,20 @@ button {
   }
   #status span {
     font-size: 9px;
+  }
+}
+
+/* 縦長スマホ（高さが低い場合） */
+@media (max-height: 700px) and (orientation: portrait) {
+  #viewport {
+    max-height: calc(100dvh - 160px);
+    margin-top: 5px;
+  }
+  #gallery {
+    bottom: 75px;
+  }
+  .controls {
+    bottom: 15px;
+    gap: 6px;
   }
 }
