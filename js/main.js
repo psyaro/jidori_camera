@@ -1,18 +1,11 @@
 // main.js - エントリーポイント、各モジュールの連携
 
-// オンライン時はキャッシュを強制削除
-if (navigator.onLine && 'caches' in window) {
-  caches.keys().then(keys => {
-    keys.forEach(key => caches.delete(key));
-  });
-}
-
-import { startCamera, switchCamera } from './camera.js';
+import { startCamera } from './camera.js';
 import { initFaceDetector, detectFaces } from './faceDetector.js';
 import { analyzeSmileWithBlendshapes } from './smileAnalyzer.js';
 import { initAutoShutter, processAutoShutter, cancelCountdown } from './autoShutter.js';
 import { drawFaceMesh } from './meshRenderer.js';
-import { initUI, appSettings, setShutterHandler, setSwitchCameraHandler, takePhoto, updateSmileDisplay, getElements } from './ui.js';
+import { initUI, appSettings, setShutterHandler, takePhoto, updateSmileDisplay, getElements } from './ui.js';
 import { saveToGallery, loadGallery } from './gallery.js';
 
 // DOM要素
@@ -21,6 +14,51 @@ const canvas = document.getElementById("output_canvas");
 const ctx = canvas.getContext("2d");
 const viewport = document.getElementById("viewport");
 const countdownEl = document.getElementById("countdown");
+const installBtn = document.getElementById('install_app');
+
+// PWA インストールプロンプトの制御
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBtn) installBtn.style.display = 'block';
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      installBtn.style.display = 'none';
+    }
+    deferredPrompt = null;
+  });
+}
+
+// Service Worker の登録と更新通知
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    const registration = await navigator.serviceWorker.register('./sw.js');
+    
+    registration.addEventListener('updatefound', () => {
+      const newWorker = registration.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          // 新しいSWがインストールされたが、まだ待機中の場合
+          if (confirm('新しいバージョンが利用可能です。更新して再読み込みしますか？')) {
+            newWorker.postMessage({ type: 'SKIP_WAITING' });
+          }
+        }
+      });
+    });
+  });
+
+  // 新しいSWが制御を開始したらリロード
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
 
 /**
  * アプリケーション初期化
@@ -39,12 +77,6 @@ async function init() {
 
   // シャッターボタンのハンドラを設定
   setShutterHandler(doTakePhoto);
-
-  // カメラ切り替えハンドラを設定
-  setSwitchCameraHandler(async () => {
-    const newMode = await switchCamera();
-    appSettings.facingMode = newMode;
-  });
 
   // グローバルに写真撮影関数を公開（自動シャッター用）
   window.takePhoto = doTakePhoto;

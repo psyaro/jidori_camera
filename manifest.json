@@ -1,8 +1,8 @@
 {
-  "name": "Face Mesh Jidori Camera",
-  "short_name": "JidoriCam",
-  "description": "AI顔認識機能を備えた自撮りカメラアプリ",
-  "start_url": "./index.html",
+  "name": "Jidori Camera",
+  "short_name": "Jidori",
+  "description": "Face Mesh based Auto Shutter Camera",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#222222",
   "theme_color": "#222222",
