@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jidori-cam-v3';
+const CACHE_NAME = 'jidori-cam-v4';
 const DATA_CACHE_NAME = 'mediapipe-models-v1';
 const ASSETS = [
   './',

@@ -1,5 +1,12 @@
 // main.js - エントリーポイント、各モジュールの連携
 
+// オンライン時はキャッシュを強制削除
+if (navigator.onLine && 'caches' in window) {
+  caches.keys().then(keys => {
+    keys.forEach(key => caches.delete(key));
+  });
+}
+
 import { startCamera } from './camera.js';
 import { initFaceDetector, detectFaces } from './faceDetector.js';
 import { analyzeSmileWithBlendshapes } from './smileAnalyzer.js';
