@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>PWA Icon Generator</title>
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f0f0; }
+    .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+    input { font-size: 3rem; width: 80px; text-align: center; margin: 1rem; border: 1px solid #ccc; border-radius: 8px; }
+    button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+    button:hover { background: #0056b3; }
+    canvas { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Icon Generator</h1>
+    <p>絵文字を入力してボタンを押すと、PWA用のアイコン（192px / 512px）を生成してダウンロードします。</p>
+    <input type="text" id="emojiInput" value="📸">
+    <br>
+    <button onclick="generateIcons()">アイコンを生成して保存</button>
+  </div>
+
+  <script>
+    function generateIcons() {
+      const emoji = document.getElementById('emojiInput').value || '📸';
+      const sizes = [192, 512];
+      
+      sizes.forEach(size => {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        // 背景色 (manifest.jsonのbackground_colorに合わせる)
+        ctx.fillStyle = '#222222';
+        ctx.fillRect(0, 0, size, size);
+
+        // 絵文字の描画
+        ctx.font = `${size * 0.7}px serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(emoji, size / 2, size / 2 + size * 0.05);
+
+        // ダウンロード
+        const link = document.createElement('a');
+        link.download = `icon-${size}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>

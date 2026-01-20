@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Face Mesh App</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <div id="app">
+    <div id="viewport">
+      <video id="webcam" autoplay playsinline></video>
+      <canvas id="output_canvas"></canvas>
+      <div id="status">
+        <div>Smile: <span id="smile_val">0</span> | Mouth: <span id="mouth_val">0</span></div>
+        <div>EyeSquint: <span id="eye_squint_val">0</span> | Cheek: <span id="cheek_squint_val">0</span></div>
+        <div><span id="eye_status"></span></div>
+      </div>
+      <div id="countdown"></div>
+    </div>
+    <div id="flash"></div>
+    
+    <div class="controls">
+      <button id="toggle_mesh">メッシュ: OFF</button>
+      <button id="toggle_auto_shutter">自動シャッター: OFF</button>
+      <button id="shutter">シャッター</button>
+      <button id="install_app" style="display: none;">アプリをインストール</button>
+    </div>
+    <div id="gallery"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
