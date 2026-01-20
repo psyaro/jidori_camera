@@ -23,17 +23,18 @@ body {
   transform-origin: center top;
   width: 100%;
   max-width: 640px;
-  max-height: calc(100dvh - 180px);
-  aspect-ratio: 4 / 3;
+  height: calc(100dvh - 180px);
+  overflow: hidden;
 }
 video, canvas {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transform: scaleX(-1);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scaleX(-1);
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
 }
 
 /* ステータス表示 */
@@ -175,7 +176,7 @@ button {
   #viewport {
     margin-top: 5px;
     max-width: 60vw;
-    max-height: calc(100dvh - 60px);
+    height: calc(100dvh - 60px);
   }
   .controls {
     position: fixed;
@@ -202,7 +203,7 @@ button {
 /* 小さいモバイル */
 @media (max-width: 380px) {
   #viewport {
-    max-height: calc(100dvh - 160px);
+    height: calc(100dvh - 160px);
   }
   button {
     padding: 10px 12px;
@@ -224,7 +225,7 @@ button {
 /* 縦長スマホ（高さが低い場合） */
 @media (max-height: 700px) and (orientation: portrait) {
   #viewport {
-    max-height: calc(100dvh - 160px);
+    height: calc(100dvh - 160px);
     margin-top: 5px;
   }
   #gallery {
