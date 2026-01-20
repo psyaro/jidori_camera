@@ -87,42 +87,95 @@ video, canvas {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  gap: 12px;
+  gap: 8px;
   padding: 0 10px;
   z-index: 100;
   width: 100%;
   max-width: 500px;
 }
 button {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  padding: 12px 16px;
+  border-radius: 25px;
   border: none;
-  font-size: 24px;
+  font-weight: bold;
+  font-size: 14px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #555;
-  transition: background 0.2s, transform 0.1s;
-}
-button:active {
-  transform: scale(0.95);
+  white-space: nowrap;
+  transition: background-color 0.2s, transform 0.1s;
 }
 #shutter {
   background: white;
-  width: 65px;
-  height: 65px;
-  font-size: 28px;
+  color: black;
+  padding: 16px 32px;
+  font-size: 16px;
 }
-#toggle_mesh, #toggle_auto_shutter, #switch_camera {
-  background: #555;
+#toggle_mesh, #toggle_auto_shutter { background: #555; color: white; }
+#toggle_mesh.active, #toggle_auto_shutter.active { background: #007bff; }
+#install_app { background: #007bff; color: white; }
+
+/* メニュー関連 */
+.menu-container {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 1000;
 }
-#toggle_mesh.active, #toggle_auto_shutter.active {
-  background: #007bff;
+.menu-icon-btn {
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
-#install_app { background: #007bff; }
+.menu-content {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: rgba(34, 34, 34, 0.95);
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 160px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.menu-content.show {
+  display: flex;
+}
+.menu-item select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  background: #444;
+  color: white;
+  border: none;
+}
+.menu-btn {
+  width: 100%;
+  text-align: left;
+  padding: 10px;
+  background: transparent;
+}
+
+.slider-group {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(0,0,0,0.4);
+  padding: 8px 15px;
+  border-radius: 20px;
+  margin-top: 5px;
+  font-size: 12px;
+}
 
 /* ギャラリー表示 */
 #gallery {
@@ -163,17 +216,15 @@ button:active {
     font-size: 120px;
   }
   button {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
+    padding: 15px 25px;
+    font-size: 15px;
   }
   #shutter {
-    width: 75px;
-    height: 75px;
-    font-size: 32px;
+    padding: 18px 40px;
+    font-size: 18px;
   }
   #gallery {
-    bottom: 100px;
+    bottom: 90px;
     justify-content: center;
   }
   #gallery img {
@@ -221,17 +272,12 @@ button:active {
     height: calc(100dvh - 160px);
   }
   button {
-    width: 44px;
-    height: 44px;
-    font-size: 20px;
+    padding: 10px 12px;
+    font-size: 12px;
   }
   #shutter {
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
-  }
-  .controls {
-    gap: 8px;
+    padding: 14px 24px;
+    font-size: 14px;
   }
   #status {
     font-size: 9px;

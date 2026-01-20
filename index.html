@@ -22,13 +22,30 @@
       <div id="countdown"></div>
     </div>
     <div id="flash"></div>
+
+    <!-- 右上メニュー -->
+    <div class="menu-container">
+      <button id="menu_toggle" class="menu-icon-btn" title="メニュー">⋮</button>
+      <div id="menu_content" class="menu-content">
+        <div class="menu-item">
+          <select id="mode_selector">
+            <option value="selfie">自撮りモード</option>
+            <option value="face_gym">顔の体操モード</option>
+          </select>
+        </div>
+        <button id="install_app" class="menu-btn" style="display: none;">📲 インストール</button>
+      </div>
+    </div>
     
     <div class="controls">
       <button id="toggle_mesh" title="メッシュ表示">🎭</button>
       <button id="toggle_auto_shutter" title="自動シャッター">⏱️</button>
       <button id="switch_camera" title="カメラ切替">🔄</button>
       <button id="shutter" title="シャッター">📸</button>
-      <button id="install_app" title="インストール" style="display: none;">📲</button>
+      <div class="slider-group">
+        <label>Sensitivity: <span id="threshold_val">0.50</span></label>
+        <input type="range" id="smile_threshold" min="0.1" max="0.9" step="0.01" value="0.50">
+      </div>
     </div>
     <div id="gallery"></div>
   </div>

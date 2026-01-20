@@ -3,9 +3,10 @@
 import { startCamera } from './camera.js';
 import { initFaceDetector, detectFaces } from './faceDetector.js';
 import { analyzeSmileWithBlendshapes } from './smileAnalyzer.js';
+import { analyzeSmile as analyzeSmileForGym } from './face_gymnastics.js';
 import { initAutoShutter, processAutoShutter, cancelCountdown } from './autoShutter.js';
 import { drawFaceMesh } from './meshRenderer.js';
-import { initUI, appSettings, setShutterHandler, takePhoto, updateSmileDisplay, getElements } from './ui.js';
+import { initUI, appSettings, setShutterHandler, takePhoto, updateSmileDisplay, updateFaceGymDisplay, getElements } from './ui.js';
 import { saveToGallery, loadGallery } from './gallery.js';
 
 // DOM要素
@@ -14,27 +15,6 @@ const canvas = document.getElementById("output_canvas");
 const ctx = canvas.getContext("2d");
 const viewport = document.getElementById("viewport");
 const countdownEl = document.getElementById("countdown");
-const installBtn = document.getElementById('install_app');
-
-// PWA インストールプロンプトの制御
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (installBtn) installBtn.style.display = 'block';
-});
-
-if (installBtn) {
-  installBtn.addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      installBtn.style.display = 'none';
-    }
-    deferredPrompt = null;
-  });
-}
 
 // Service Worker の登録と更新通知
 if ('serviceWorker' in navigator) {
@@ -105,25 +85,31 @@ function predictWebcam() {
   if (results && results.faceLandmarks) {
     for (let i = 0; i < results.faceLandmarks.length; i++) {
       const landmarks = results.faceLandmarks[i];
-      const blendshapes = results.faceBlendshapes ? results.faceBlendshapes[i] : null;
 
-      // Blendshapesを使った笑顔分析
-      const smileData = analyzeSmileWithBlendshapes(landmarks, blendshapes);
+      if (appSettings.appMode === 'selfie') {
+        const blendshapes = results.faceBlendshapes ? results.faceBlendshapes[i] : null;
 
-      // UI表示更新
-      updateSmileDisplay(smileData);
+        // Blendshapesを使った笑顔分析
+        const smileData = analyzeSmileWithBlendshapes(landmarks, blendshapes, appSettings.smileThreshold);
 
-      // 自動シャッター処理
-      if (appSettings.autoShutter) {
-        // 総合判定: 口と目の両方が笑っている場合のみシャッター
-        processAutoShutter(smileData.isGenuineSmile, window.takePhoto);
-      }
+        // UI表示更新
+        updateSmileDisplay(smileData);
 
-      // 撮影中でない場合のみ、エフェクトやメッシュを描画
-      if (!appSettings.isCapturing) {
-        if (appSettings.showMesh) {
-          drawFaceMesh(ctx, landmarks);
+        // 自動シャッター処理
+        if (appSettings.autoShutter) {
+          // 総合判定: 自然な笑顔であり、かつ作り笑い（Fake Smile）ではない場合のみシャッターを許可
+          const canTrigger = smileData.isGenuineSmile && !smileData.isFakeSmile;
+          processAutoShutter(canTrigger, window.takePhoto);
         }
+      } else if (appSettings.appMode === 'face_gym') {
+        // 顔の体操モードの処理
+        const gymData = analyzeSmileForGym(landmarks);
+        updateFaceGymDisplay(gymData);
+      }
+      
+      // 撮影中でない場合のみ、メッシュを描画
+      if (!appSettings.isCapturing && appSettings.showMesh) {
+        drawFaceMesh(ctx, landmarks, appSettings.appMode);
       }
     }
   }
